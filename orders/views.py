@@ -136,7 +136,7 @@ def payment(request):
             order.save()
             for data in cart_from_db:
                 items = OrderDetail(items_id=data.product_id, quantity=data.quantity, unit_price=data.unit_price, placed_order_id=order.id)
-            items.save()
+                items.save()
             InCart.objects.all().delete()
         else:
             payment = Payment()
@@ -148,9 +148,9 @@ def payment(request):
             order.order_total = amount
             order.save()
             for data in cart:
-                items = OrderDetail(items_id=data.product, quantity=data.quantity, unit_price=data.unit_price,
+                items = OrderDetail(items_id=data.product.id, quantity=data.quantity, unit_price=data.unit_price,
                                     placed_order_id=order.id)
-            items.save()
+                items.save()
             cart.clear()
         return render(request, 'orders/index.html', {'message': "Thank you your online order was placed successfully"})
     except stripe.error.CardError as e:
