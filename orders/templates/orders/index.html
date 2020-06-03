@@ -1,0 +1,404 @@
+{% extends "orders/base.html" %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+ <p class="error_messages">{{ message }}</p>
+<slider>
+  <slide>
+    <p><img src="static/images/steaksub.png" style="width:120%"></p>
+    <span id=labels>
+      <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=46 anchor='store' %}" method="post">
+        {% csrf_token %}
+      <h4>Steak + Cheese</h4>
+      <br>
+      <h5> Small   $6.95</h5>
+      <br>
+      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart"></input>
+      </form>
+    </span>
+  </slide>
+  <slide>
+    <label style="" for="slide">Our Delivers!</label>
+     <p id='deliver'>
+       <a href="https://www.doordash.com/en-US"><img src="static/images/door dash.jpg" style="width:20%"></a>
+       <a href="https://www.skipthedishes.com/"><img src="static/images/Skipdish.png" style="width:20%"></a>
+       <a href="https://www.eat24.com/"><img src="static/images/eat-24-square-1.jpg" style="width:20%"></a>
+       <a href="https://www.ubereats.com/ca"><img src="static/images/uber eats.jpg" style="width:20%"></a>
+     </p>
+  </slide>
+  <slide>
+    <p><img src="static/images/ziti.png " style="width:120%"></p>
+    <span id=labels>
+      <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=65 anchor='store'  %}" method="post">
+        {% csrf_token %}
+      <h4>Baked Ziti w/ Mozzarella</h4>
+      <br>
+      <h5>$6.50</h5>
+      <br>
+        <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart"></input>
+      </form>
+    </span>
+  </slide>
+  <slide>
+     <p><img src="static/images/Cheese-PIzza1.jpg" style="width:120%"></p>
+     <span id=labels>
+       <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=5 anchor='store' %}" method="post">
+         {% csrf_token %}
+       <h4>Sicilian Cheese Pizza</h4>
+       <br>
+       <h5> Small   $24.45</h5>
+       <br>
+         <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart"></input>
+       </form>
+     </span>
+   </slide>
+</slider>
+<br>
+<br>
+  <h2 style="padding-left:15%">Menu</h2>
+<div class="col-container">
+
+  <div id=menu class=" col">
+      <br>
+      <br>
+      <span id=sic_pizza style="float:left;padding-left:15%; "><label class="menu_labels">Sicilian Pizza</label><br><a href="#sic_pizzas"><img src="static/images/sicilian.png"></a></span>
+      <span style="float:left;padding-left:3%;"><label class="menu_labels">Salads</label><br><a href="#salads"><img src="static/images/Salad.jpg"></a></span>
+      <span id=subs_ style="float:left; padding-left:3%;"><label class="menu_labels">Subs</label><br><a href="#subs"><img src="static/images/subs_menu.jpg"></a></span>
+      <span style="float:left; padding-left:15%;"><label class="menu_labels">Regular Pizza</label><br><a href="#reg_pizzas"><img src="static/images/pizzas.jpg"></a></span>
+      <span style="float:left;padding-left:3%;"><label class="menu_labels">Dinner Plates</label><br><a href="#dinners"><img src="static/images/antipasto.jpg"></a></span>
+      <span style="float:left;padding-left:3%;" ><label class="menu_labels">Pasta</label><br><a href="#pastas"><img src="static/images/pasta.jpg"></a></span>
+  </div>
+  <section class="col">
+    <span id="close-bar" class="sticky"><a id='img_cart' class="sticky" href='#in_cart'><label  id='ct' for="img_cart"></label><img src="static/images/shopping_cart-black-48dp.svg" title="Cart"></a></span>
+    </section>
+</div>
+
+<!-- upsheet in_cart -->
+<div id='in_cart' class="overlay_cart">
+			<aside class="bottomsheet_cart" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <table id='tbcart' style="padding-left: 1px;">
+          <tr>
+              <th class="header">Quantity</th>
+              <th class="header">Product</th>
+              <th class="header">Unit Price</th>
+              <th class="header">Total</th>
+          </tr>
+            {% csrf_token %}
+          {% if request.user.is_authenticated %}
+           {% for item in cart_from_db %}
+            <tr>
+             <td id='qtd' class="header">{{ item.quantity }}</td>
+             <td class="header" style="min-width:200px">{{ item.product__category }} - {{item.product__productName}}</td>
+             <td class="header">{{ item.unit_price }}</td>
+             <td id='total' class="header">{{ item.total }}</td>
+             <td class="header"><a href="{% url 'remove_from_cart' item.product item.cart_id %}" >&#x1F5D1; Remove</a></td>
+            </tr>
+            {% empty %}
+            <tr<td>Your car is empty</td></tr>
+            {% endfor %}
+            {% else %}
+          {% for item in cart %}
+          <tr>
+              <td id='qtd' class="header">{{ item.quantity }}</td>
+              <td class="header" style="min-width:200px">{{ item.product.category }} - {{ item.product.productName }} </td>
+              <td class="header">{{ item.product.unitPrice }}</td>
+              <td id='total' class="header">{{ item.total_price }}</td>
+              <td class="header"><a href="{% url 'remove_from_cart' item.product.id item.cart_id %}" >&#x1F5D1; Remove</a></td>
+          </tr>
+          {% empty %}
+          <tr<td>Your car is empty</td></tr>
+          {% endfor %}
+          {% endif %}
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr><td class="header"></td>
+          <td class="header"></td>
+          <td style="font-weight:bolder" class="header">TOTAL</td>
+          <td id='total_ck' style="font-weight:bolder" class="header"></td></tr>
+        </table>
+        <br>
+        <form action="{% url 'proceed_checkout' %}" method='post'>
+              {% csrf_token %}
+          <input id='btn_checkout' class="btn_checkout" type="submit" disabled='true' name="checkout"  value="Proceed to Checkout >">
+        </form>
+      </aside>
+  <a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- bottomsheet pizza -->
+<div id="reg_pizzas" type='reg_pizzas' class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <h1 id='int_menu_title'>Regular Pizza</h1><br>
+        {% regroup regular_pizza by productName as rp_items %}
+            <ul class="menu_">
+                {% for productName in rp_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form action="{% url 'add_to_cart' product_id=items.id anchor='reg_pizzas' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>{{ items.size}} - ${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+              </ul>
+
+              <h1 id='int_menu_title'>Toppings</h1><br>
+                  <ul class="menu_">
+                      {% for items in pizza_toppings %}
+                        <ul>
+                          <form id='dd' action="{% url 'add_to_cart' product_id=items.id anchor='reg_pizzas' %}" method="post">
+                            {% csrf_token %}
+                              <span id='lblSize'>{{ items.productName }} - ${{ items.unitPrice}}</span>
+                              <input class="btnPlus" type="submit" value="+" title="add to cart" name={{ items.id}}></input><br><br>
+                            </form>
+                        </ul>
+                        {% empty %}
+                        <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                        {% endfor %}
+                        </ul>
+            <form action="">
+              <div id="rp_tb"></div>
+
+            </form>
+      </aside>
+  <a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+
+
+<!-- bottomsheet pizza -->
+<div id="sic_pizzas" class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <h1 id='int_menu_title'>Sicilian Pizza</h1><br>
+        {% regroup sicilian_pizza by productName as rsp_items %}
+            <ul class="menu_">
+                {% for productName in rsp_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=items.id anchor='sic_pizzas' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>{{ items.size}} - ${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+                  <br><br>
+                </li>
+              {% endfor %}
+              </ul>
+
+              <h1 id='int_menu_title'>Toppings</h1><br>
+                  <ul class="menu_">
+                      {% for items in pizza_toppings %}
+                      <ul>
+                        <form id='dd' action="{% url 'add_to_cart' product_id=items.id anchor='sic_pizzas' %}" method="post">
+                          {% csrf_token %}
+                            <span id='lblSize'>{{ items.productName }} - ${{ items.unitPrice}}</span>
+                            <input class="btnPlus" type="submit" value="+" title="add to cart" name={{ items.id}}></input><br><br>
+                          </form>
+                      </ul>
+                        {% empty %}
+                        <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                        {% endfor %}
+                        </ul>
+            <form action="">
+              <div id="sp_tb"></div>
+            </form>
+      </aside>
+  <a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+<!-- bootsheet dinner -->
+<div id="dinners" class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+              <h1 id='int_menu_title'>Dinner Plates</h1><br>
+        {% regroup dinners by productName as dinner_items %}
+            <ul class="menu_">
+                {% for productName in dinner_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=items.id anchor='dinners' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>{{ items.size}} - ${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+
+                </li>
+              {% endfor %}
+            	</ul>
+            <form action="">
+              <div id=dinner_tb></div>
+            </form>
+			</aside>
+	<a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+
+<!-- bootsheet pasta -->
+<div id="pastas" class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+              <h1 id='int_menu_title'>Pastas</h1><br>
+        {% regroup pasta by productName as pasta_items %}
+            <ul class="menu_">
+                {% for productName in pasta_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=items.id anchor='pastas' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            	</ul>
+            <form action="">
+              <div id=pasta_tb></div>
+            </form>
+			</aside>
+	<a href="#store_deliver" class="btn-close" aria-hidden="true"></a>
+</div>
+
+
+<!-- bootsheet salad -->
+<div id="salads" class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+              <h1 id='int_menu_title'>Salads</h1><br>
+        {% regroup salads by productName as salad_items %}
+            <ul class="menu_">
+                {% for productName in salad_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=items.id anchor='salads' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            	</ul>
+            <form action="">
+              <div id=salad_tb></div>
+            </form>
+			</aside>
+	<a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+
+<!-- bootsheet subs -->
+<div id="subs" class="overlay">
+			<aside class="bottomsheet" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+              <h1 id='int_menu_title'>Subs</h1><br>
+        {% regroup subs by productName as sub_items %}
+            <ul class="menu_">
+                {% for productName in sub_items %}
+                <li style="color:#d15b1f; font-size:18px; font-weight:bolder;">{{ productName.grouper }}
+                  <ul>
+                    {% for items in productName.list %}
+                    <form id='call_add_to_cart' action="{% url 'add_to_cart' product_id=items.id anchor='subs' %}" method="post">
+                      {% csrf_token %}
+                      <span id='lblSize'>{{ items.size}} - ${{ items.unitPrice}}</span>
+                      <input type="submit" class="btnOrder"  value="Add to cart"  title="add to cart" id=testeee></input><br><br>
+                    </form>
+                  {% empty %}
+                  <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            	</ul>
+
+              <h1 id='int_menu_title'>Add-Ons</h1><br>
+                  <ul class="menu_">
+                      {% for items in subs_toppings %}
+                      <ul>
+                         <form id='dd' action="{% url 'add_to_cart' product_id=items.id anchor='subs' %}" method="post">
+                            {% csrf_token %}
+                            <span id='lblSize'>{{ items.productName }} - ${{ items.unitPrice}}</span>
+                            <input class="btnPlus" type="submit" value="+" title="add to cart" name={{ items.id}}></input><br><br>
+                          </form>
+                      </ul>
+                        {% empty %}
+                        <li><a><span aria-hidden="true" aria-role="presentation"></span> No products</a></li>
+                        {% endfor %}
+                        </ul>
+            <form action="">
+              <div id=sub_tb></div>
+            </form>
+			</aside>
+	<a href="#store_deliver" class="btn-close" aria-hidden="true"><span class="mdi mdi-close"></span><span class="sr-only">Close</span></a>
+</div>
+
+
+<script>
+var sum = 0;
+var shopping_cart = 0;
+var preco = document.querySelectorAll('#total');
+var qtde = document.querySelectorAll('#qtd');
+
+
+ for (var i = 0; i < preco.length; i++) {
+    sum += parseFloat(preco[i].innerHTML);
+    sum.toFixed(2);
+    if (preco.length > 0);
+      document.getElementById('btn_checkout').disabled = false;
+}
+  document.getElementById('total_ck').innerHTML ='$'+ String(sum);
+
+
+for (var i=0 ; i < qtde.length; i++){
+  shopping_cart += parseInt(qtde[i].innerHTML);
+}
+  document.getElementById('ct').innerHTML = shopping_cart;
+
+
+// // var speed = 300;
+// $('#close-bar').on('click', function(){
+//   var $$ = $(this),
+//   panelWidth = $('#hiddenPanel').outerWidth();
+//   if( $$.is('.sticky') ){
+//     $('#hiddenPanel').animate({right:0}, speed);
+//     $$.removeClass('sticky')
+//     } else {
+//       $('#hiddenPanel').animate({right:-panelWidth}, speed);
+//       $$.addClass('sticky')
+//       }
+//         });
+</script>
+
+
+{% endblock %}

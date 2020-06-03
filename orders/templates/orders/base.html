@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PizzaMar</title>
+  <link rel="stylesheet" href="static/style.css"></>
+  <link rel="stylesheet" href="static/scripts.js"></>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  {% block head %}
+  {% endblock %}
+</head>
+
+<body>
+  <div id=nav_area>
+    <span id=logo><a href="store" title="home"><img src="static/images/rsz_logo.png" alt='home'></img></a></span>
+    <span id=logo_text> Pizza Mar</span>
+      {% csrf_token %}
+    {% if request.user.is_authenticated %}
+    <div id=login>
+      <div class="dropdown">
+      <button class="dropbtn">{{ request.user.first_name }}&#9663;</button>
+      <div class="dropdown-content">
+        <a href="logout_user">Logout</a>
+      </div>
+      </div>
+    </div>
+    {% else %}
+    <div id=login>
+    <span id=img><a href='signin'><img src="static/images/person_pin-24px.svg"></a></span>
+    <span><a class="link1" href="signin">Sign In</a><br><a class="link2" href="signup">Create Account</a>
+    </span>
+    </div>
+    {% endif %}
+  </div>
+  {% block content %}
+  {% endblock %}
+</body>
+
+</html>

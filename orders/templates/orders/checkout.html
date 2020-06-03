@@ -1,0 +1,174 @@
+{% extends "orders/base.html" %}
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+ <p class="error_messages">{{ message }}</p>
+        <table id='checkout' style="padding-left: 1px;">
+        <h3 class='tb_cart'>Order Sumary</h3>
+          <tr>
+              <th class="header">Quantity</th>
+              <th class="header">Product</th>
+              <th class="header">Unit Price</th>
+              <th class="header">Total</th>
+          </tr>
+            {% csrf_token %}
+          {% if request.user.is_authenticated %}
+           {% for item in cart_from_db %}
+            <tr>
+             <td id='qtd' class="header">{{ item.quantity }}</td>
+             <td class="header" style="min-width:200px">{{ item.product__category }} - {{item.product__productName}}</td>
+             <td class="header">{{ item.unit_price }}</td>
+             <td id='total' class="header">{{ item.total }}</td>
+
+            </tr>
+            {% empty %}
+            <tr<td>Your car is empty</td></tr>
+            {% endfor %}
+            {% else %}
+          {% for item in cart %}
+          <tr>
+              <td id='qtd' class="header">{{ item.quantity }}</td>
+              <td class="header" style="min-width:200px">{{ item.product.category }} - {{ item.product.productName }} </td>
+              <td class="header">{{ item.product.unitPrice }}</td>
+              <td id='total' class="header">{{ item.total_price }}</td>
+          </tr>
+          {% empty %}
+          <tr<td>Your car is empty</td></tr>
+          {% endfor %}
+          {% endif %}
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr></tr>
+          <tr><td class="header"></td>
+          <td class="header"></td>
+          <td style="font-weight:bolder" class="header">TOTAL</td>
+          <td id='total_ck' style="font-weight:bolder" class="header"></td></tr>
+            <br><br><br><br>
+          <tr>
+            <td><a type="button" class="back_to_cart" href="store#in_cart" name="Go back to cart">Go back to cart</a></td>
+             <td></td>
+            <td>
+              <input id='btnpayment' class="btnOrder" type="button" onclick="Payment()" name="payment" value="Confirm and Continue Payment" >
+          </td>
+          <td></td>
+          </tr>
+        </table>
+          <br><br>
+            <div style="display:none"  id="payment">
+              <h3 class="tb_cart">Payment</h3>
+              <br>
+              <script src="https://js.stripe.com/v3/"></script>
+
+                    <form action="{% url 'payment'  %}" method="post" id="stripe-form">
+                       {% csrf_token %}
+                        <label id='stripeBtnLabel' for="card-element">
+                        Credit or debit card
+                        </label>
+                        <div id="card-element">
+                        <!-- A Stripe Element will be inserted here. -->
+                        </div>
+
+                        <!-- Used to display form errors. -->
+                        <div id="card-errors" role="alert"></div>
+
+                        <button id="submpayment" name='submpayment' type="submit"></button>
+                    </form>
+                  </div>
+<script>
+var sum = 0;
+var preco = document.querySelectorAll('#total');
+ for (var i = 0; i < preco.length; i++) {
+    sum += parseFloat(preco[i].innerHTML);
+    sum.toFixed(2);
+}
+  document.getElementById('total_ck').innerHTML ='$'+ String(sum);
+  document.getElementById('submpayment').innerHTML = 'Pay' +'      ' +'$'+ String(sum);
+
+
+  function Payment() {
+    var x = document.getElementById("payment");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+
+// Create a Stripe client.
+var stripe = Stripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+// Create an instance of Elements.
+var elements = stripe.elements();
+
+var style = {
+  base: {
+     color: '#32325d',
+     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+     fontSmoothing: 'antialiased',
+     fontSize: '16px',
+     '::placeholder': {
+       color: '#aab7c4'
+     }
+   },
+   invalid: {
+     color: '#fa755a',
+     iconColor: '#fa755a'
+   }
+
+};
+// Custom styling can be passed to options when creating an Element.
+// (Note that this demo uses a wider set of styles than the guide below.)
+// Create an instance of the card Element.
+var card = elements.create('card', {style: style});
+//
+// // Add an instance of the card Element into the `card-element` <div>.
+card.mount('#card-element');
+
+// Handle real-time validation errors from the card Element.
+card.on('change', function(event) {
+  var displayError = document.getElementById('card-errors');
+  if (event.error) {
+    displayError.textContent = event.error.message;
+  } else {
+    displayError.textContent = '';
+  }
+});
+
+// Handle form submission.
+var form = document.getElementById('stripe-form');
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  stripe.createToken(card).then(function(result) {
+    if (result.error) {
+      // Inform the user if there was an error.
+      var errorElement = document.getElementById('card-errors');
+      errorElement.textContent = result.error.message;
+    } else {
+      // Send the token to your server.
+      stripeTokenHandler(result.token);
+
+    }
+  });
+});
+
+// Submit the form with the token ID.
+function stripeTokenHandler(token) {
+  // Insert the token ID into the form so it gets submitted to the server
+  var form = document.getElementById('stripe-form');
+  var hiddenInput = document.createElement('input');
+  hiddenInput.setAttribute('type', 'hidden');
+  hiddenInput.setAttribute('name', 'stripeToken');
+  hiddenInput.setAttribute('value', token.id);
+  form.appendChild(hiddenInput);
+  // Submit the form
+  form.submit();
+}
+
+</script>
+
+
+
+{% endblock %}

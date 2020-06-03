@@ -1,0 +1,36 @@
+{% extends 'orders/base.html' %}
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<div>
+  <div style="min-width: 40%; padding-top:30px; float:left"><a title="back" id=back_link style="text-decoration: none; color: #0a0a0a; font-weight: bolder; font-size: 20px; padding-left: 60px;" href='store'><img src='static/images/arrow_back_ios-24px.svg'>Back</a></div>
+  <div style="padding-top:30px;  float:left"><h1 style="text-align:center; font-family: Segoe UI Black;">SIGN UP</h1></div>
+</div>
+<br>
+
+<div style="padding-left: 20%; padding-top: 100px; color: #ba1809">
+  <form action="{% url 'signup' %}" method="post">
+    {% csrf_token %}
+      <h5>First Name</h5><br>
+      <input type="text" name="firstName" required style="border-top: none;border-left: none; border-right: none;  border-bottom-width: thin;border-color:#ba1809; width: 350px"></input>
+      <br>
+      <br>
+      <h5>Last Name</h5><br>
+      <input type="text" name="lastName" required  style="border-top: none;border-left: none; border-right: none;  border-bottom-width: thin;border-color:#ba1809; width: 350px"></input>
+      <br>
+      <br>
+      <h5>Email address</h5><br>
+      <input type="email" name="email"  required style="border-top: none;border-left: none; border-right: none;   border-bottom-width: thin;border-color:#ba1809; width: 350px"></input>
+      <br>
+      <br>
+      <h5>Password</h5><br>
+      <input type="password" name="password" required  style="border-top: none;border-left: none; border-right: none;  border-bottom-width: thin;border-color:#ba1809; width: 350px"></input>
+      <br>
+      <br>
+      <input type="submit" name="submit" value="    Sign Up    " class="btnSubmit">
+  </form>
+  <br><br>
+<p class="error_messages">{{ message }}</p>
+</div>
+{% endblock %}
